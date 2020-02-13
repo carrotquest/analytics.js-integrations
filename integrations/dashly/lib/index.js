@@ -31,7 +31,7 @@ Dashly.prototype.initialize = function() {
   window.dashly = {};
   window.dashlyasync = [];
 
-  var m = [
+  var methods = [
     'addCallback',
     'auth',
     'connect',
@@ -43,14 +43,23 @@ Dashly.prototype.initialize = function() {
     'trackMessageInteraction'
   ];
 
-  for (var i = 0; i < m.length; i++) {
-    window.dashly[m[i]] = Build(m[i]);
+  for (var i = 0; i < methods.length; i++) {
+    window.dashly[methods[i]] = Build(methods[i]);
   }
 
-  window.dashly.connect(apiKey);
+  window.dashly.connect(apiKey, {
+    connectionSource: 'Segment'
+  });
 
   this.load(this.ready);
 
+  /**
+   * Save methods for async call after script loaded
+   *
+   * @param {String} name Method name
+   * @returns {function(...[*]=)}
+   * @constructor
+   */
   function Build(name) {
     return function() {
       window.dashlyasync.push(name, arguments);
@@ -73,13 +82,13 @@ Dashly.prototype.loaded = function() {
  * Identify.
  *
  * @api public
- * @param {Identify} identifyFacade
+ * @param {Identify} identify
  */
 
-Dashly.prototype.identify = function(identifyFacade) {
-  var dashlySettings = identifyFacade.options(this.name);
-  var traits = Dashly.formatTraits(identifyFacade);
-  var userId = identifyFacade.userId();
+Dashly.prototype.identify = function(identify) {
+  var dashlySettings = identify.options(this.name);
+  var traits = Dashly.formatTraits(identify);
+  var userId = identify.userId();
 
   if (dashlySettings.user_hash) {
     dashlySettings.userHash = dashlySettings.user_hash;
@@ -96,11 +105,11 @@ Dashly.prototype.identify = function(identifyFacade) {
  * Track.
  *
  * @api public
- * @param {Track} trackFacade
+ * @param {Track} track
  */
 
-Dashly.prototype.track = function(trackFacade) {
-  var event = Dashly.formatEvent(trackFacade);
+Dashly.prototype.track = function(track) {
+  var event = Dashly.formatEvent(track);
 
   window.dashly.track(event.name, event.properties);
 };
@@ -111,12 +120,12 @@ Dashly.prototype.track = function(trackFacade) {
  *
  * https://dashly.io/developers/events/
  *
- * @param {Track} trackFacade
+ * @param {Track} track
  * @returns {Object} formatted event
  */
 
-module.exports.formatEvent = function(trackFacade) {
-  var eventName = trackFacade.event();
+module.exports.formatEvent = function(track) {
+  var eventName = track.event();
   var aliases;
   var properties;
 
@@ -128,7 +137,7 @@ module.exports.formatEvent = function(trackFacade) {
       };
 
       eventName = '$order_completed';
-      properties = trackFacade.properties(aliases);
+      properties = track.properties(aliases);
       break;
     case 'Product Viewed':
       aliases = {
@@ -139,7 +148,7 @@ module.exports.formatEvent = function(trackFacade) {
       };
 
       eventName = '$product_viewed';
-      properties = trackFacade.properties(aliases);
+      properties = track.properties(aliases);
       break;
     case 'Product Added':
       aliases = {
@@ -150,7 +159,7 @@ module.exports.formatEvent = function(trackFacade) {
       };
 
       eventName = '$cart_added';
-      properties = trackFacade.properties(aliases);
+      properties = track.properties(aliases);
       break;
     case 'Signed In':
       aliases = {
@@ -158,7 +167,7 @@ module.exports.formatEvent = function(trackFacade) {
       };
 
       eventName = '$authorized';
-      properties = trackFacade.properties(aliases);
+      properties = track.properties(aliases);
       break;
     case 'Signed Up':
       aliases = {
@@ -167,10 +176,10 @@ module.exports.formatEvent = function(trackFacade) {
       };
 
       eventName = '$registered';
-      properties = trackFacade.properties(aliases);
+      properties = track.properties(aliases);
       break;
     default:
-      properties = trackFacade.properties();
+      properties = track.properties();
       break;
   }
 
@@ -186,11 +195,11 @@ module.exports.formatEvent = function(trackFacade) {
  *
  * https://dashly.io/developers/props/
  *
- * @param identifyFacade
+ * @param identify
  * @returns {Object} formatted traits
  */
 
-module.exports.formatTraits = function(identifyFacade) {
+module.exports.formatTraits = function(identify) {
   var aliases = {
     // standard traits names can be in camelCase or in _underscore, so rename them in _underscore
     createdAt: 'created_at',
@@ -206,7 +215,7 @@ module.exports.formatTraits = function(identifyFacade) {
     phone: '$phone'
   };
 
-  var traits = identifyFacade.traits(aliases);
+  var traits = identify.traits(aliases);
 
   // format name like Segment does it
   // first_name and last_name are ignored when name exists

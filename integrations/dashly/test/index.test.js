@@ -11,7 +11,7 @@ describe('Dashly', function() {
   var analytics;
   var dashly;
   var options = {
-    apiKey: '223322223322'
+    apiKey: '1234567890'
   };
 
   beforeEach(function() {
@@ -74,7 +74,9 @@ describe('Dashly', function() {
         analytics.initialize();
         analytics.page();
         analytics.equal(window.dashlyasync[0], 'connect');
-        analytics.equal(window.dashlyasync[1][0], options.apiKey);
+        analytics.equal(window.dashlyasync[1][0], options.apiKey, {
+          connectionSource: 'Segment'
+        });
       });
 
       it('should call #load', function() {
@@ -130,16 +132,6 @@ describe('Dashly', function() {
         analytics.equal(dashly.authorized, true);
       });
 
-      /* it('should set authorized to true if user hash and user id are specified', function () {
-        analytics.stub(window.dashly, 'auth');
-        analytics.identify('id', {}, {
-          Dashly: {
-            userHash: 'hash'
-          }
-        });
-        analytics.equal(dashly.authorized, true);
-      }); */
-
       it('should not call window.dashly.auth if user id is not specified', function() {
         analytics.stub(window.dashly, 'auth');
         analytics.identify(
@@ -179,7 +171,7 @@ describe('Dashly', function() {
   });
 
   describe('formatEvent', function() {
-    function trackFacadeMockFactory(eventName, properties) {
+    function trackMockFactory(eventName, properties) {
       return {
         event: function() {
           return eventName;
@@ -316,12 +308,12 @@ describe('Dashly', function() {
           testCaseData.segmentEventName +
           "' event",
         function() {
-          var trackFacadeMock = trackFacadeMockFactory(
+          var trackMock = trackMockFactory(
             testCaseData.segmentEventName,
             testCaseData.formattedEventProperties
           );
 
-          analytics.deepEqual(Dashly.formatEvent(trackFacadeMock), {
+          analytics.deepEqual(Dashly.formatEvent(trackMock), {
             name: testCaseData.formattedEventName,
             properties: testCaseData.resultEventProperties
           });
@@ -331,7 +323,7 @@ describe('Dashly', function() {
   });
 
   describe('formatTraits', function() {
-    function identifyFacadeMockFactory(traits) {
+    function identifyMockFactory(traits) {
       return {
         traits: function(aliases) {
           var copiedTraits = clone(traits);
@@ -378,12 +370,9 @@ describe('Dashly', function() {
         }
       };
 
-      var identifyFacadeMock = identifyFacadeMockFactory(traits);
+      var identifyMock = identifyMockFactory(traits);
 
-      analytics.deepEqual(
-        Dashly.formatTraits(identifyFacadeMock),
-        formattedTraits
-      );
+      analytics.deepEqual(Dashly.formatTraits(identifyMock), formattedTraits);
     });
 
     it('should merge firstName and lastName into $name', function() {
@@ -396,12 +385,9 @@ describe('Dashly', function() {
         $name: 'John Doe'
       };
 
-      var identifyFacadeMock = identifyFacadeMockFactory(traits);
+      var identifyMock = identifyMockFactory(traits);
 
-      analytics.deepEqual(
-        Dashly.formatTraits(identifyFacadeMock),
-        formattedTraits
-      );
+      analytics.deepEqual(Dashly.formatTraits(identifyMock), formattedTraits);
     });
 
     it('should use name as $name instead of firstName and lastName', function() {
@@ -415,12 +401,9 @@ describe('Dashly', function() {
         $name: 'Richard Roe'
       };
 
-      var identifyFacadeMock = identifyFacadeMockFactory(traits);
+      var identifyMock = identifyMockFactory(traits);
 
-      analytics.deepEqual(
-        Dashly.formatTraits(identifyFacadeMock),
-        formattedTraits
-      );
+      analytics.deepEqual(Dashly.formatTraits(identifyMock), formattedTraits);
     });
   });
 });
