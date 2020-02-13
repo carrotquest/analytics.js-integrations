@@ -1,7 +1,7 @@
 {
   "integrations": {
-    "Google Analytics": {
-      "serversideTrackingId": "foobar"
+    "Dashly": {
+      "apiKey": "8-ddf99de3042cfc4cad9d7c80c44a35"
     }
   }
 }

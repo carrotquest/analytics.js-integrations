@@ -15,7 +15,7 @@ var Dashly = (module.exports = integration('Dashly')
   .global('dashly')
   .global('dashlyasync')
   .option('apiKey', null)
-  .tag('<script src="//cdn.dashly.app/api.min.js"></script>'));
+  .tag('<script src="//beta-02.carrotquest.io/cdn/api.js"></script>'));
 
 /**
  * Initialize.
