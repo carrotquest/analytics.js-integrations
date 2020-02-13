@@ -37,7 +37,7 @@ describe('Dashly', function() {
         .global('dashly')
         .global('dashlyasync')
         .option('apiKey', null)
-        .tag('<script src="//127.0.0.1/cdn/api.js"></script>')
+        .tag('<script src="//cdn.dashly.app/api.min.js"></script>')
     );
   });
 

@@ -15,8 +15,7 @@ var Dashly = (module.exports = integration('Dashly')
   .global('dashly')
   .global('dashlyasync')
   .option('apiKey', null)
-  .tag('<script src="//127.0.0.1/cdn/api.js"></script>'));
-// .tag('<script src="//cdn.carrotquest.io/api.min.js"></script>'));
+  .tag('<script src="//cdn.dashly.app/api.min.js"></script>'));
 
 /**
  * Initialize.
@@ -97,7 +96,7 @@ Dashly.prototype.identify = function(identifyFacade) {
  * Track.
  *
  * @api public
- * @param {Identify} trackFacade
+ * @param {Track} trackFacade
  */
 
 Dashly.prototype.track = function(trackFacade) {
