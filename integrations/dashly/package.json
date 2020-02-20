@@ -13,11 +13,11 @@
     "test": "karma start",
     "test:ci": "karma start karma.conf-ci.js"
   },
-  "author": "Rumyantsev Artem <rumartcer@gmail.com>",
+  "author": "Rumyantsev Artem <rumartcer@carrotquest.io>",
   "license": "SEE LICENSE IN LICENSE",
   "homepage": "https://github.com/segmentio/analytics.js-integrations/blob/master/integrations/dashly#readme",
   "bugs": {
-    "url": "https://github.com/segmentio/analytics.js-integrations/issues"
+    "url": "https://github.com/carrotquest/analytics.js-integrations/issues"
   },
   "repository": {
     "type": "git",
